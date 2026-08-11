@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     "cards",
-    "rest_framework"
+    "rest_framework",
+    "pricing",
 ]
 
 MIDDLEWARE = [

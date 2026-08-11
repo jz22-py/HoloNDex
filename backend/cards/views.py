@@ -1,6 +1,6 @@
 from rest_framework import generics
-from .models import Card, Set, PriceSnapshot
-from .serializers import CardSerializer, SetSerializer, PriceSnapshotSerializer
+from .models import Card, Set
+from .serializers import CardSerializer, SetSerializer
 
 
 class CardListView(generics.ListAPIView):
