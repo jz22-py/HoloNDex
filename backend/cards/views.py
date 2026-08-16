@@ -13,3 +13,10 @@ class CardListView(generics.ListAPIView):
 class SetListView(generics.ListAPIView):
     queryset = Set.objects.all()
     serializer_class = SetSerializer
+
+class CardDetailView(generics.RetrieveAPIView):
+    queryset = Card.objects.all()
+    serializer_class = CardSerializer
+    
+    lookup_field = "id"
+    lookup_url_kwarg = "card_id"
