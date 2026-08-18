@@ -1,17 +1,23 @@
-export async function getCardsBySet(setId: string){
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/sets/${setId}/cards/`)
+import type { Card, PriceSnapshot } from "../types/card"
+
+
+async function fetchAPI(endpoint: string){
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${endpoint}`)
+    console.log(response)
     const data = await response.json()
+    console.log(data)
     return data
 }
 
-export async function getCardById(cardId: string){
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/cards/${cardId}/`)
-    const data = await response.json()
-    return data
+export async function getCardsBySet(setId: string): Promise<Card[]>{
+    return fetchAPI(`/api/sets/${setId}/cards/`)
 }
 
-export async function getCardPrices(cardId: string){
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/cards/${cardId}/prices/`)
-    const data = await response.json()
-    return data
+export async function getCardById(cardId: string): Promise<Card>{
+    return fetchAPI(`/api/cards/${cardId}/`)
 }
+
+export async function getCardPrices(cardId: string): Promise<PriceSnapshot[]>{
+    return fetchAPI(`/api/cards/${cardId}/prices/`)
+}
+
