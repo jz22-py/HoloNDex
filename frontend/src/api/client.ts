@@ -1,11 +1,10 @@
 import type { Card, PriceSnapshot } from "../types/card"
+import type { Set } from "../types/set"
 
 
 async function fetchAPI(endpoint: string){
     const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${endpoint}`)
-    console.log(response)
     const data = await response.json()
-    console.log(data)
     return data
 }
 
@@ -21,3 +20,6 @@ export async function getCardPrices(cardId: string): Promise<PriceSnapshot[]>{
     return fetchAPI(`/api/cards/${cardId}/prices/`)
 }
 
+export async function getAllSets(): Promise<Set[]>{
+    return fetchAPI(`/api/sets/`)
+}
