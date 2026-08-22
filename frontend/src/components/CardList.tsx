@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
 import type { Card } from "../types/card"
 import { getCardsBySet } from "../api/client"
 
@@ -12,7 +13,9 @@ export function CardList( {setId}: {setId: string}){
     return (
         <>
         {cards.map(card => (
-            <img key={card.id} src={card.image_url} />
+            <Link key={card.id} to={`/cards/${card.id}`}>
+                <img src={card.image_url} />
+            </Link>
         ))}
         </>
     )
