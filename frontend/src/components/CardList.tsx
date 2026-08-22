@@ -11,13 +11,12 @@ export function CardList( {setId}: {setId: string}){
     }, [setId])
 
     return (
-        <>
-        {cards.map(card => (
-            <Link key={card.id} to={`/cards/${card.id}`}>
-                <img src={card.image_url} />
-            </Link>
-        ))}
-        </>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-10 gap-4">
+            {cards.map(card => (
+                <Link key={card.id} to={`/cards/${card.id}`}>
+                    <img src={card.image_url} alt={card.name} />
+                </Link>
+            ))}
+        </div>
     )
 }
-
