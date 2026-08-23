@@ -10,4 +10,4 @@ class CardSerializer(serializers.ModelSerializer):
 class SetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Set
-        fields = ['id', 'name', 'series', 'release_date', 'total_cards', 'external_id']
+        fields = ['id', 'name', 'series', 'release_date', 'total_cards', 'external_id', "abbreviation", "logo_url"]
