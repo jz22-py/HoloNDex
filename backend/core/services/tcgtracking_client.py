@@ -15,3 +15,7 @@ def get_set_pricing(set_id: str):
     pricing_response.raise_for_status()
     return pricing_response.json()
 
+def get_tcgtracking_sets():
+    sets_response = requests.get(BASE_URL, timeout=5) 
+    sets_response.raise_for_status()
+    return sets_response.json()
