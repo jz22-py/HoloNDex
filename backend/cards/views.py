@@ -8,10 +8,10 @@ class CardListView(generics.ListAPIView):
 
     def get_queryset(self):
         set_id = self.kwargs["set_id"]
-        return Card.objects.filter(card_set_id=set_id)
+        return Card.objects.filter(card_set_id=set_id).order_by("external_id") #TODO: order by price
 
 class SetListView(generics.ListAPIView):
-    queryset = Set.objects.all()
+    queryset = Set.objects.all().order_by("-release_date")
     serializer_class = SetSerializer
 
 class CardDetailView(generics.RetrieveAPIView):
