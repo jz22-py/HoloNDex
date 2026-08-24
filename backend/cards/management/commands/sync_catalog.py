@@ -9,23 +9,14 @@ from cards.models import Set, Card
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        EXCLUDED_SETS = {
-            ("EX Battle Stadium", "BST"),
-        }
-
         pokemontcg_by_code = get_pokemontcg_by_code()
-        tcgtracking_sets = [s for s in get_tcgtracking_sets()["sets"]
-            if (
-                s.get("name"),
-                s.get("abbreviation"),
-            ) not in EXCLUDED_SETS
-        ]
+        tcgtracking_sets = get_tcgtracking_sets()["sets"]
 
         for tcgtracking_set in tcgtracking_sets:
             if tcgtracking_set.get("is_supplemental"):
                 continue
 
-            match = resolve_match(tcgtracking_set["abbreviation"], pokemontcg_by_code)
+            match = resolve_match(tcgtracking_set["abbreviation"], pokemontcg_by_code, tcgtracking_set["name"])
             if match is None:
                 continue
 
