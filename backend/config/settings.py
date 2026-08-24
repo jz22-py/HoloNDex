@@ -120,7 +120,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "America/New_York"
 
 USE_I18N = True
 
@@ -136,3 +136,6 @@ STATIC_URL = 'static/'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173"
 ]
+
+CELERY_BROKER_URL = "redis://localhost:6379/0"
+CELERY_TIMEZONE = "America/New_York"
