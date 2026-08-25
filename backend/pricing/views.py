@@ -7,4 +7,4 @@ class PriceSnapshotListView(generics.ListAPIView):
 
     def get_queryset(self):
         card_id = self.kwargs["card_id"]
-        return PriceSnapshot.objects.filter(card_id=card_id)   
+        return PriceSnapshot.objects.filter(card_id=card_id).order_by("recorded_at") 
