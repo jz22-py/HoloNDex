@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import environ
-
+from celery.schedules import crontab
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -139,3 +139,27 @@ CORS_ALLOWED_ORIGINS = [
 
 CELERY_BROKER_URL = "redis://localhost:6379/0"
 CELERY_TIMEZONE = "America/New_York"
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "loggers": {
+        "pricing": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": True,
+        },
+    },
+}
+
+CELERY_BEAT_SCHEDULE = {
+    "fetch-all-prices-daily": {
+        "task": "pricing.tasks.fetch_all_prices",
+        "schedule": crontab(hour=21, minute=0),
+    },
+}
