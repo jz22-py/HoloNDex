@@ -6,6 +6,7 @@ export interface Card {
     supertype: string
     external_id: string
     image_url: string
+    current_price: string | null
 }
 
 export interface PriceSnapshot {

@@ -15,6 +15,9 @@ export function CardList( {setId}: {setId: string}){
             {cards.map(card => (
                 <Link key={card.id} to={`/cards/${card.id}`}>
                     <img src={card.image_url} alt={card.name} />
+                    <p className="text-sm text-center mt-1">
+                        {card.name} | {card.current_price !== null ? `$${card.current_price}` : "---"}
+                    </p>
                 </Link>
             ))}
         </div>

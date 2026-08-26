@@ -3,9 +3,14 @@ from .models import Card, Set
 
 
 class CardSerializer(serializers.ModelSerializer):
+    current_price = serializers.SerializerMethodField()
+
+    def get_current_price(self, obj):
+        return getattr(obj, "current_price", None)
+    
     class Meta:
         model = Card
-        fields = ['id', 'name', 'number', 'rarity', 'supertype', 'image_url', 'external_id']
+        fields = ['id', 'name', 'number', 'rarity', 'supertype', 'image_url', 'external_id', 'current_price']
 
 class SetSerializer(serializers.ModelSerializer):
     class Meta:
