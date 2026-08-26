@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { Link, useSearchParams } from "react-router-dom"
 import type { Card } from "../types/card"
 import { getCardsBySet } from "../api/client"
+import imageUnavailable from "../assets/image_unavailable.svg"
 
 export function CardList({ setId }: { setId: string }) {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -27,7 +28,14 @@ export function CardList({ setId }: { setId: string }) {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-10 gap-4">
                 {cards.map(card => (
                     <Link key={card.id} to={`/cards/${card.id}`}>
-                        <img src={card.image_url} alt={card.name} />
+                        <img src={
+                            card.image_url || imageUnavailable}
+                            onError={(e) => {
+                                e.currentTarget.onerror = null
+                                e.currentTarget.src = imageUnavailable
+                            }} 
+                            alt = {card.name}
+                            />
                         <p className="text-sm text-center mt-1">
                             {card.name}
                         </p>

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { getCardById } from "../api/client"
 import type { Card as CardType } from "../types/card"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import imageUnavailable from "../assets/image_unavailable.svg"
 
 
 export function CardDetail( {cardId}: {cardId: string}){
@@ -11,21 +12,29 @@ export function CardDetail( {cardId}: {cardId: string}){
         getCardById(cardId).then(data => {setCard(data)})
     }, [cardId])
 
-    if (!card) {
-        return <p>Card not found</p>
+    if (!card){
+        return null
     }
 
     return (
-        <Card>
-            <CardContent>
-                <img src={card.image_url} alt={card.name} />
-            </CardContent>
+        <Card className="max-w-md mx-auto mt-8">
             <CardHeader>
-                <CardTitle>{card.name}</CardTitle>
+                <CardTitle className="text-xl">{card.name}</CardTitle>
                 <CardDescription>
                     #{card.number} · {card.rarity}
                 </CardDescription>
             </CardHeader>
+            <CardContent className="flex justify-center">
+                <img
+                    src={card.image_url || imageUnavailable}
+                    onError={(e) => {
+                        e.currentTarget.onerror = null
+                        e.currentTarget.src = imageUnavailable
+                    }}
+                    alt={card.name}
+                    className="w-56 rounded-lg shadow-md"
+                />
+            </CardContent>
         </Card>
     )
 }
