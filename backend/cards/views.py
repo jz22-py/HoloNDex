@@ -3,10 +3,12 @@ from rest_framework import generics
 from .models import Card, Set
 from pricing.models import PriceSnapshot
 from .serializers import CardSerializer, SetSerializer
+from core.pagination import CardListPagination
 
 
 class CardListView(generics.ListAPIView):
     serializer_class = CardSerializer
+    pagination_class = CardListPagination
 
     def get_queryset(self):
         set_id = self.kwargs["set_id"]
@@ -22,7 +24,7 @@ class CardListView(generics.ListAPIView):
             Card.objects
             .filter(card_set_id=set_id)
             .annotate(current_price=Subquery(latest_price))
-            .order_by(F("current_price").desc(nulls_last=True))
+            .order_by(F("current_price").desc(nulls_last=True), "id")
         )
 
 class SetListView(generics.ListAPIView):
