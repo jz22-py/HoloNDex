@@ -54,7 +54,7 @@ class Command(BaseCommand):
                         "name": card["name"],
                         "number": card["number"],
                         "rarity": card["rarity"],
-                        #supertype: placeholder
-                        "image_url": card["image_url"], 
+                        "image_url": card["image_url"],
+                        "artist": (card.get("ext_data") or {}).get("Artist"),
                     }
                 )

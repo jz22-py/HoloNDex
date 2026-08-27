@@ -10,7 +10,7 @@ class CardSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Card
-        fields = ['id', 'name', 'number', 'rarity', 'supertype', 'image_url', 'external_id', 'current_price']
+        fields = ['id', 'name', 'number', 'rarity', 'image_url', 'external_id', 'current_price', 'artist']
 
 class SetSerializer(serializers.ModelSerializer):
     class Meta:
