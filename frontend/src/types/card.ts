@@ -7,6 +7,7 @@ export interface Card {
     external_id: string
     image_url: string
     current_price: string | null
+    artist: string | null
 }
 
 export interface PriceSnapshot {
