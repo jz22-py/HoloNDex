@@ -32,8 +32,16 @@ class SetListView(generics.ListAPIView):
     serializer_class = SetSerializer
 
 class CardDetailView(generics.RetrieveAPIView):
-    queryset = Card.objects.all()
     serializer_class = CardSerializer
-    
     lookup_field = "id"
     lookup_url_kwarg = "card_id"
+
+    def get_queryset(self):
+        latest_price = (
+            PriceSnapshot.objects
+            .filter(card_id=OuterRef("id"))
+            .order_by("-recorded_at")
+            .values("price")[:1]
+        )
+
+        return Card.objects.annotate(current_price=Subquery(latest_price))

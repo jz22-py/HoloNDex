@@ -21,7 +21,7 @@ export function CardDetail( {cardId}: {cardId: string}){
             <CardHeader>
                 <CardTitle className="text-xl">{card.name}</CardTitle>
                 <CardDescription>
-                    #{card.number} · {card.rarity}
+                    #{card.number} · {card.rarity} | {card.current_price !== null ? `$${card.current_price}` : "---"}
                 </CardDescription>
             </CardHeader>
             <CardContent className="flex justify-center">
