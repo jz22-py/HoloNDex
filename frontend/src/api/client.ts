@@ -23,3 +23,7 @@ export async function getCardPrices(cardId: string): Promise<PriceSnapshot[]>{
 export async function getAllSets(): Promise<Set[]>{
     return fetchAPI(`/api/sets/`)
 }
+
+export async function getSetById(setId: string): Promise<Set>{
+    return fetchAPI(`/api/sets/${setId}/`)
+}

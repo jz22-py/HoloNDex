@@ -31,6 +31,12 @@ class SetListView(generics.ListAPIView):
     queryset = Set.objects.all().order_by("-release_date")
     serializer_class = SetSerializer
 
+class SetDetailView(generics.RetrieveAPIView):
+    queryset = Set.objects.all()
+    serializer_class = SetSerializer
+    lookup_field = "id"
+    lookup_url_kwarg = "set_id"
+
 class CardDetailView(generics.RetrieveAPIView):
     serializer_class = CardSerializer
     lookup_field = "id"
