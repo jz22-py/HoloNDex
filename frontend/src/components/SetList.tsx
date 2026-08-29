@@ -5,7 +5,41 @@ import { getAllSets } from "../api/client"
 import type { Set } from "../types/set"
 import { groupSetsBySeries } from "../utils/groupSetsBySeries"
 
+import megaEvolution from "../assets/mega_evolution.jpg"
+import scarletViolet from "../assets/scarlet_violet.jpeg"
+import swordShield from "../assets/sword_shield.png"
+import sunMoon from "../assets/sun_moon.jpg"
+import xy from "../assets/x_y.jpg"
+import blackWhite from "../assets/black_white.jpg"
+import heartGoldSoulSilver from "../assets/heartgold_soulsilver.png"
+import platinum from "../assets/platinum.png"
+import diamondPearl from "../assets/diamond_pearl.jpg"
+import ex from "../assets/ex.png"
+import eCard from "../assets/ecard.png"
+import neo from "../assets/neo.png"
+import gym from "../assets/gym.png"
+import base from "../assets/base.png"
+
+
+
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+const SERIES_BANNERS: Record<string, string> = {
+    "Mega Evolution": megaEvolution,
+    "Scarlet & Violet": scarletViolet,
+    "Sword & Shield": swordShield,
+    "Sun & Moon": sunMoon,
+    "XY": xy,
+    "Black & White": blackWhite,
+    "HeartGold & SoulSilver": heartGoldSoulSilver,
+    "Platinum": platinum,
+    "Diamond & Pearl": diamondPearl,
+    "EX": ex,
+    "E-Card": eCard,
+    "Neo": neo,
+    "Gym": gym,
+    "Base": base,
+}
 
 function formatReleaseDate(dateStr: string): string {
     const [year, month] = dateStr.split("-")
@@ -23,9 +57,22 @@ export function SetList() {
 
     return (
         <div className="space-y-10">
-            {groupedSets.map((group) => (
+            {groupedSets.map((group) => {
+                const banner = SERIES_BANNERS[group.series]
+
+                return (
                 <div key={group.sets[0].id}>
-                    <h2 className="mb-4 text-xl font-semibold tracking-[-0.6px] text-[#f7f8f8] sm:text-2xl">{group.series}</h2>
+                    {banner ? (
+                        <div className="relative mb-4 overflow-hidden rounded-xl">
+                            <img src={banner} alt="" className="h-40 w-full object-cover object-[50%_40%] sm:h-52" />
+                            <div className="absolute inset-0 bg-linear-to-t from-[#121212] via-[#121212]/30 to-transparent" />
+                            <h2 className="absolute bottom-4 left-4 text-2xl font-semibold tracking-[-0.6px] text-white sm:text-3xl">
+                                {group.series}
+                            </h2>
+                        </div>
+                    ) : (
+                        <h2 className="mb-4 text-xl font-semibold tracking-[-0.6px] text-[#f7f8f8] sm:text-2xl">{group.series}</h2>
+                    )}
 
                     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
                         {group.sets.map((set) => (
@@ -55,7 +102,8 @@ export function SetList() {
                         ))}
                     </div>
                 </div>
-            ))}
+                )
+            })}
         </div>
     )
 }
