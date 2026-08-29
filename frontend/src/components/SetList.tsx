@@ -46,8 +46,11 @@ function formatReleaseDate(dateStr: string): string {
     return `${MONTH_NAMES[Number(month) - 1]} ${year}`
 }
 
+const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-")
+
 export function SetList() {
     const [sets, setSets] = useState<Set[]>([])
+    const [menuOpen, setMenuOpen] = useState(false)
 
     useEffect(() => {
         getAllSets().then(data => {setSets(data)})
@@ -57,11 +60,65 @@ export function SetList() {
 
     return (
         <div className="space-y-10">
+
+            {/* series TOC, desktop only right side vertical nav*/}
+            <nav className="fixed top-1/2 right-4 z-20 hidden -translate-y-1/2 flex-col items-end gap-4 xl:flex">
+                {groupedSets.map((group) => (
+                    <a
+                        key={group.series}
+                        href={`#${slugify(group.series)}`}
+                        className="group flex items-center gap-2.5"
+                    >
+                        <span className="text-xs whitespace-nowrap text-[#b3b3b3] transition-colors duration-300 group-hover:text-[#f7f8f8]">
+                            {group.series}
+                        </span>
+                        <span className="relative flex h-3 w-3 shrink-0 items-center justify-center rounded-full border border-[#4d4d4d] transition-colors duration-300 group-hover:border-[#1ed760]">
+                            <span className="absolute inset-0 rounded-full border border-dashed border-transparent transition-all duration-500 ease-out group-hover:rotate-180 group-hover:border-[#1ed760]/60" />
+                            <span className="h-1 w-1 rounded-full bg-[#b3b3b3] transition-colors duration-300 group-hover:bg-[#1ed760]" />
+                        </span>
+                    </a>
+                ))}
+            </nav>
+
+            {/* burger menu TOC, mobile/tablet only, dims background when open */}
+            <div
+                onClick={() => setMenuOpen(false)}
+                className={`fixed inset-0 z-10 bg-black transition-opacity duration-300 xl:hidden ${menuOpen ? "opacity-60" : "pointer-events-none opacity-0"}`}
+            />
+            <div className="fixed top-4 right-4 z-20 xl:hidden">
+                <button
+                    onClick={() => setMenuOpen((o) => !o)}
+                    aria-label="Toggle series menu"
+                    className="relative flex h-9 w-9 items-center justify-center rounded-full border border-[#4d4d4d] bg-[#181818] text-[#b3b3b3] transition-colors duration-300 hover:border-[#1ed760] hover:text-[#f7f8f8]"
+                >
+                    <span className="relative flex h-4 w-4 items-center justify-center">
+                        <span className={`absolute h-0.5 w-4 rounded-full bg-current transition-all duration-300 ${menuOpen ? "translate-y-0 rotate-45" : "-translate-y-1.5"}`} />
+                        <span className={`absolute h-0.5 w-4 rounded-full bg-current transition-all duration-300 ${menuOpen ? "scale-x-0 opacity-0" : "scale-x-100 opacity-100"}`} />
+                        <span className={`absolute h-0.5 w-4 rounded-full bg-current transition-all duration-300 ${menuOpen ? "translate-y-0 -rotate-45" : "translate-y-1.5"}`} />
+                    </span>
+                </button>
+                <div
+                    className={`absolute top-11 right-0 flex flex-col items-end gap-3 rounded-xl border border-[#2a2a2a] bg-[#181818] p-4 shadow-[0_8px_24px_rgba(0,0,0,0.5)] transition-all duration-300 origin-top-right ${menuOpen ? "scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0"}`}
+                >
+                    {groupedSets.map((group) => (
+                        <a
+                            key={group.series}
+                            href={`#${slugify(group.series)}`}
+                            onClick={() => setMenuOpen(false)}
+                            className="text-xs whitespace-nowrap text-[#b3b3b3] transition-colors duration-300 hover:text-[#1ed760]"
+                        >
+                            {group.series}
+                        </a>
+                    ))}
+                </div>
+            </div>
+
+            {/* series display, banner + set grid for each series */}
             {groupedSets.map((group) => {
                 const banner = SERIES_BANNERS[group.series]
 
                 return (
-                <div key={group.sets[0].id}>
+                <div key={group.sets[0].id} id={slugify(group.series)} className="scroll-mt-6">
                     {banner ? (
                         <div className="relative mb-4 overflow-hidden rounded-xl">
                             <img src={banner} alt="" className="h-40 w-full object-cover object-[50%_40%] sm:h-52" />
