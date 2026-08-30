@@ -1,14 +1,7 @@
-import { useState, useEffect } from "react"
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts"
+import { useState, useEffect, type CSSProperties } from "react"
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { getCardPrices } from "../api/client"
 import type { PriceSnapshot } from "../types/card"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import {
   ChartContainer,
   ChartTooltip,
@@ -27,11 +20,9 @@ function dedupByLocalDate(prices: PriceSnapshot[]): PriceSnapshot[] {
     return Object.values(byKey)
 }
 
-
 function sanitizeKey(variant: string): string {
     return variant.replace(/\s+/g, "_").toLowerCase()
 }
-
 
 function buildChartData(prices: PriceSnapshot[]) {
     const byDate: Record<string, Record<string, string | number>> = {}
@@ -43,9 +34,16 @@ function buildChartData(prices: PriceSnapshot[]) {
     return Object.values(byDate)
 }
 
-const themeColors = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)"]
+const seriesColors = ["#1ed760", "#539df5", "#ffa42b", "#f3727f", "#b3b3b3"]
 
-export function PriceChart({cardId}: {cardId: string}) {
+const chartVars = {
+    "--background": "#1f1f1f",
+    "--foreground": "#f7f8f8",
+    "--border": "#2a2a2a",
+    "--muted-foreground": "#b3b3b3",
+} as CSSProperties
+
+export function PriceChart({ cardId }: { cardId: string }) {
     const [prices, setPrices] = useState<PriceSnapshot[]>([])
 
     useEffect(() => {
@@ -53,7 +51,7 @@ export function PriceChart({cardId}: {cardId: string}) {
     }, [cardId])
 
     if (prices.length === 0) {
-        return <p>Price history not found</p>
+        return <p className="text-sm text-[#b3b3b3]">Price history not found</p>
     }
 
     const deduped = dedupByLocalDate(prices)
@@ -63,38 +61,67 @@ export function PriceChart({cardId}: {cardId: string}) {
     const chartConfig = Object.fromEntries(
         variants.map((variant, i) => [
             sanitizeKey(variant),
-            { label: variant, color: themeColors[i % themeColors.length] },
+            { label: variant, color: seriesColors[i % seriesColors.length] },
         ])
     ) satisfies ChartConfig
 
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Price History</CardTitle>
-                <CardDescription>By variant, one snapshot per day</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <ChartContainer config={chartConfig} className="h-[250px] w-[1000px]">
-                    <LineChart accessibilityLayer data={chartData} margin={{ left: 12, right: 12 }}>
-                        <CartesianGrid vertical={false} />
-                        <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} />
-                        <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+        <div className="rounded-3xl bg-[#181818] p-8" style={chartVars}>
+            <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                    <h2 className="text-lg font-semibold text-[#f7f8f8]">Price History</h2>
+                    <p className="mt-1 text-sm text-[#b3b3b3]">By variant, one snapshot per day</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                    {variants.map((variant, i) => (
+                        <span key={variant} className="flex items-center gap-1.5 text-xs text-[#b3b3b3]">
+                            <span
+                                className="h-2.5 w-2.5 rounded-sm"
+                                style={{ backgroundColor: seriesColors[i % seriesColors.length] }}
+                            />
+                            {variant}
+                        </span>
+                    ))}
+                </div>
+            </div>
+            <ChartContainer config={chartConfig} className="mt-6 h-[280px] w-full">
+                <AreaChart accessibilityLayer data={chartData} margin={{ left: 4, right: 12, top: 8 }}>
+                    <defs>
                         {variants.map((variant) => {
                             const key = sanitizeKey(variant)
                             return (
-                                <Line
-                                    key={key}
-                                    dataKey={key}
-                                    type="natural"
-                                    stroke={`var(--color-${key})`}
-                                    strokeWidth={2}
-                                    dot={false}
-                                />
+                                <linearGradient key={key} id={`fill-${key}`} x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor={`var(--color-${key})`} stopOpacity={0.25} />
+                                    <stop offset="95%" stopColor={`var(--color-${key})`} stopOpacity={0} />
+                                </linearGradient>
                             )
                         })}
-                    </LineChart>
-                </ChartContainer>
-            </CardContent>
-        </Card>
+                    </defs>
+                    <CartesianGrid vertical={false} />
+                    <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} />
+                    <YAxis
+                        tickLine={false}
+                        axisLine={false}
+                        tickMargin={8}
+                        width={56}
+                        tickFormatter={(value) => `$${value}`}
+                    />
+                    <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+                    {variants.map((variant) => {
+                        const key = sanitizeKey(variant)
+                        return (
+                            <Area
+                                key={key}
+                                dataKey={key}
+                                type="natural"
+                                stroke={`var(--color-${key})`}
+                                fill={`url(#fill-${key})`}
+                                strokeWidth={2}
+                            />
+                        )
+                    })}
+                </AreaChart>
+            </ChartContainer>
+        </div>
     )
 }

@@ -1,5 +1,6 @@
 export interface Card {
     id: number
+    card_set: number
     name: string
     number: string
     rarity: string
