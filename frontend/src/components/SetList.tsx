@@ -69,7 +69,7 @@ export function SetList() {
                         href={`#${slugify(group.series)}`}
                         className="group flex items-center gap-2.5"
                     >
-                        <span className="text-xs whitespace-nowrap text-[#b3b3b3] transition-colors duration-300 group-hover:text-[#f7f8f8]">
+                        <span className="text-base whitespace-nowrap text-[#b3b3b3] transition-colors duration-300 group-hover:text-[#f7f8f8]">
                             {group.series}
                         </span>
                         <span className="relative flex h-3 w-3 shrink-0 items-center justify-center rounded-full border border-[#4d4d4d] transition-colors duration-300 group-hover:border-[#1ed760]">
