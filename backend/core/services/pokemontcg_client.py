@@ -1,4 +1,5 @@
 import requests
+import re
 
 URL_ENDPOINT = "https://raw.githubusercontent.com/PokemonTCG/pokemon-tcg-data/master/sets/en.json"
 
@@ -25,44 +26,95 @@ NAME_OVERRIDES = {
     "BW Trainer Kit: Excadrill & Zoroark": None,   # shares "BLW" with Black and White
 }
 
+WORD_RE = re.compile(r"[a-z0-9]+")
+
+
 def get_pokemontcg_sets():
     sets_response = requests.get(URL_ENDPOINT, timeout=5)
     sets_response.raise_for_status()
     return sets_response.json()
 
+
 def get_pokemontcg_by_code():
     by_code = {}
-
     for s in get_pokemontcg_sets():
         code = s.get("ptcgoCode")
         if code:
-            by_code.setdefault(code, s)
+            by_code.setdefault(code, []).append(s)
     return by_code
 
+
+def words(text):
+    return set(WORD_RE.findall(text.lower()))
+
+
+def best_candidate(name, candidates):
+    """
+    Picks the candidate whose name most closely matches tcgtracking's
+    name, using word set Jaccard similarity.
+    Example: "Hidden Fates: Shiny Vault" prefer the "Hidden Fates Shiny
+    Vault" candidate over "Hidden Fates" one, while "Hidden
+    Fates" alone still prefers the plain one (extra unmatched words in
+    either name count against the score).
+    """
+    if len(candidates) == 1:
+        return candidates[0]
+
+    name_words = words(name)
+    best, best_score = candidates[0], -1.0
+    for candidate in candidates:
+        candidate_words = words(candidate.get("name", ""))
+        union = name_words | candidate_words
+        score = len(name_words & candidate_words) / len(union) if union else 0.0
+        if score > best_score:
+            best, best_score = candidate, score
+    return best
+
+
+def lookup(code, pokemontcg_by_code, name):
+    candidates = pokemontcg_by_code.get(code)
+    if not candidates:
+        return None
+    return best_candidate(name, candidates)
+
+
 def resolve_match(abbreviation: str, pokemontcg_by_code: dict, name: str):
-    """3 tiers fallback check, returns the matched set dict or None."""
+    """4 tiers fallback check, returns the matched set dict or None."""
     if name in NAME_OVERRIDES:
         override_code = NAME_OVERRIDES[name]
         if override_code is None:
             return None
-        return pokemontcg_by_code.get(override_code)
-    
+        return lookup(override_code, pokemontcg_by_code, name)
+
     if not abbreviation:
         return None
-    
+
     if abbreviation in AMBIGUOUS_CODES:
         return None
-    
+
     # Tier 1: Exact match
-    match = pokemontcg_by_code.get(abbreviation)
+    match = lookup(abbreviation, pokemontcg_by_code, name)
     if match:
         return match
-    
+
     # Tier 2: Alias dictionary
     aliased = ABBREVIATION_ALIASES.get(abbreviation)
     if aliased:
-        return pokemontcg_by_code.get(aliased)
-    
-    # Tier 3: Suffix strip
+        match = lookup(aliased, pokemontcg_by_code, name)
+        if match:
+            return match
+
+    # Tier 3: Suffix strip, retrying the exact-match and alias tiers
+    # against the stripped code (e.g. tcgtracking's "SWSH09:TG" strips to
+    # "SWSH09", which then still needs the alias table to reach "BRS").
     base_code = abbreviation.split(":")[0].strip()
-    return pokemontcg_by_code.get(base_code)
+    match = lookup(base_code, pokemontcg_by_code, name)
+    if match:
+        return match
+
+    aliased_base = ABBREVIATION_ALIASES.get(base_code)
+    if aliased_base:
+        return lookup(aliased_base, pokemontcg_by_code, name)
+
+    # Tier 4: Fallback fail
+    return None
