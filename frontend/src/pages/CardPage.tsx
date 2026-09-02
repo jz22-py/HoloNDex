@@ -5,15 +5,25 @@ import { getCardById } from "../api/client"
 import type { Card as CardType } from "../types/card"
 import { CardDetail } from "../components/CardDetail"
 import { PriceChart } from "../components/PriceChart"
+import NotFoundPage from "./NotFoundPage"
 
 function CardPage() {
     const params = useParams()
     const cardId = params.cardId ?? ""
     const [card, setCard] = useState<CardType | null>(null)
+    const [notFound, setNotFound] = useState(false)
 
     useEffect(() => {
-        getCardById(cardId).then(data => setCard(data))
+        setCard(null)
+        setNotFound(false)
+        getCardById(cardId)
+            .then(data => setCard(data))
+            .catch(() => setNotFound(true))
     }, [cardId])
+
+    if (notFound) {
+        return <NotFoundPage />
+    }
 
     return (
         <div className="min-h-screen bg-[#121212] pb-16 text-[#f7f8f8]">

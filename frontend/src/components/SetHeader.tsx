@@ -1,8 +1,6 @@
-import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { ArrowLeft } from "lucide-react"
 import type { Set } from "../types/set"
-import { getSetById } from "../api/client"
 
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
@@ -11,13 +9,7 @@ function formatReleaseDate(dateStr: string): string {
     return `${MONTH_NAMES[Number(month) - 1]} ${year}`
 }
 
-export function SetHeader({ setId }: { setId: string }) {
-    const [set, setSet] = useState<Set | null>(null)
-
-    useEffect(() => {
-        getSetById(setId).then(data => setSet(data))
-    }, [setId])
-
+export function SetHeader({ set }: { set: Set | null }) {
     return (
         <header className="border-b border-white/10 pb-6">
             <Link
