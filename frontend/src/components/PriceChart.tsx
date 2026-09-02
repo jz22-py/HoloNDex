@@ -11,7 +11,7 @@ import {
 
 // Collapses same-day snapshots (browser's local timezone) to one per
 // variant per day. Later snapshots overwrite earlier ones for that day.
-function dedupByLocalDate(prices: PriceSnapshot[]): PriceSnapshot[] {
+export function dedupByLocalDate(prices: PriceSnapshot[]): PriceSnapshot[] {
     const byKey: Record<string, PriceSnapshot> = {}
     for (const price of prices) {
         const localDate = new Date(price.recorded_at).toLocaleDateString()
@@ -24,7 +24,7 @@ function sanitizeKey(variant: string): string {
     return variant.replace(/\s+/g, "_").toLowerCase()
 }
 
-function buildChartData(prices: PriceSnapshot[]) {
+export function buildChartData(prices: PriceSnapshot[]) {
     const byDate: Record<string, Record<string, string | number>> = {}
     for (const price of prices) {
         const localDate = new Date(price.recorded_at).toLocaleDateString()

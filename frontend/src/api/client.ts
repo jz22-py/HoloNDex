@@ -4,6 +4,9 @@ import type { Page } from "../types/page"
 
 async function fetchAPI(endpoint: string){
     const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${endpoint}`)
+    if (!response.ok) {
+        throw new Error(`API request to ${endpoint} failed with status ${response.status}`)
+    }
     const data = await response.json()
     return data
 }
