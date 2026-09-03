@@ -14,8 +14,6 @@ function CardPage() {
     const [notFound, setNotFound] = useState(false)
 
     useEffect(() => {
-        setCard(null)
-        setNotFound(false)
         getCardById(cardId)
             .then(data => setCard(data))
             .catch(() => setNotFound(true))

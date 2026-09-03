@@ -13,8 +13,6 @@ function SetPage() {
     const [notFound, setNotFound] = useState(false)
 
     useEffect(() => {
-        setSet(null)
-        setNotFound(false)
         getSetById(setId)
             .then(data => setSet(data))
             .catch(() => setNotFound(true))

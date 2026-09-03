@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { buildChartData, dedupByLocalDate } from "./PriceChart"
+import { buildChartData, dedupByLocalDate } from "./priceChartData"
 import type { PriceSnapshot } from "../types/card"
 
 function snapshot(variant: string, price: string, recorded_at: string): PriceSnapshot {
