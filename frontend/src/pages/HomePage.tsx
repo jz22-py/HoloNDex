@@ -4,8 +4,8 @@ import logo from "../assets/logo.png"
 function HomePage() {
     return (
         <div className="min-h-screen bg-[#121212] pb-16 text-[#f7f8f8]">
-            <div className="flex items-center justify-center gap-3 pt-10">
-                <img src={logo} alt="" className="h-16 w-16 object-contain sm:h-20 sm:w-20" />
+            <div className="flex items-center justify-center pt-10">
+                <img src={logo} alt="" className="h-24 w-24 object-contain sm:h-32 sm:w-32" />
                 <span className="text-4xl font-extrabold tracking-[-1px] sm:text-5xl">
                     <span className="text-[#f7f8f8]">Holo</span>
                     <span className="text-[#1ed760]">N</span>
