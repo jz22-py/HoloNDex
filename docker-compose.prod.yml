@@ -1,6 +1,6 @@
 # Lean production stack for the Droplet: Gunicorn + Postgres.
-# Frontend stays on Cloudflare Pages. Daily prices: host cron →
-#   docker compose --env-file .env.prod -f docker-compose.prod.yml exec -T web python manage.py fetch_prices
+# Frontend stays on Cloudflare Pages.
+# Daily price snapshots are fetched by host cron using fetch_all_prices.
 #
 # Usage on the Droplet:
 #   cp .env.prod.example .env.prod   # then edit secrets / hosts
@@ -33,7 +33,7 @@ services:
       # Always talk to the compose Postgres service (overrides any localhost URL)
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     depends_on:
       db:
         condition: service_healthy
