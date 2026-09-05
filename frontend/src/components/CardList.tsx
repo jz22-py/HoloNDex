@@ -8,6 +8,29 @@ import imageUnavailable from "../assets/image_unavailable.svg"
 // must match core/pagination.CardListPagination on the backend
 const PAGE_SIZE = 30
 
+//Compact page list so mobile doesn't overflow 
+export function getVisiblePages(current: number, total: number): (number | "ellipsis")[] {
+    if (total <= 7) {
+        return Array.from({ length: total }, (_, i) => i + 1)
+    }
+
+    const pages = new Set<number>([1, total])
+    for (let i = current - 1; i <= current + 1; i++) {
+        if (i >= 1 && i <= total) pages.add(i)
+    }
+
+    const sorted = [...pages].sort((a, b) => a - b)
+    const result: (number | "ellipsis")[] = []
+    for (let i = 0; i < sorted.length; i++) {
+        const n = sorted[i]!
+        if (i > 0 && n - sorted[i - 1]! > 1) {
+            result.push("ellipsis")
+        }
+        result.push(n)
+    }
+    return result
+}
+
 export function CardList({ setId }: { setId: string }) {
     const [searchParams, setSearchParams] = useSearchParams()
 
@@ -66,37 +89,49 @@ export function CardList({ setId }: { setId: string }) {
                 ))}
             </div>
 
-            <div className="flex items-center justify-center gap-3">
+            <div className="flex max-w-full flex-wrap items-center justify-center gap-2 sm:gap-3">
                 <button
                     onClick={() => setSearchParams({ page: String(page - 1) })}
                     disabled={!hasPrev}
-                    className="flex h-9 items-center gap-1.5 rounded-full bg-[#1f1f1f] px-4 text-xs font-bold tracking-[1.2px] text-[#f7f8f8] uppercase transition-colors duration-200 hover:bg-[#2a2a2a] disabled:pointer-events-none disabled:opacity-40"
+                    aria-label="Previous page"
+                    className="flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-[#1f1f1f] px-3 text-xs font-bold tracking-[1.2px] text-[#f7f8f8] uppercase transition-colors duration-200 hover:bg-[#2a2a2a] disabled:pointer-events-none disabled:opacity-40 sm:px-4"
                 >
                     <ArrowLeft className="h-3.5 w-3.5" />
-                    Prev
+                    <span className="hidden sm:inline">Prev</span>
                 </button>
-                <div className="flex items-center gap-1">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
-                        <button
-                            key={n}
-                            onClick={() => setSearchParams({ page: String(n) })}
-                            aria-current={n === page ? "page" : undefined}
-                            className={`flex h-9 w-9 items-center justify-center rounded-lg text-xs font-semibold transition-colors duration-200 ${
-                                n === page
-                                    ? "bg-[#2a2a2a] text-[#f7f8f8]"
-                                    : "text-[#b3b3b3] hover:bg-white/5 hover:text-[#f7f8f8]"
-                            }`}
-                        >
-                            {n}
-                        </button>
-                    ))}
+                <div className="flex max-w-full min-w-0 items-center gap-0.5 overflow-x-auto sm:gap-1">
+                    {getVisiblePages(page, totalPages).map((item, index) =>
+                        item === "ellipsis" ? (
+                            <span
+                                key={`ellipsis-${index}`}
+                                className="flex h-9 w-7 shrink-0 items-center justify-center text-xs text-[#b3b3b3]"
+                                aria-hidden
+                            >
+                                …
+                            </span>
+                        ) : (
+                            <button
+                                key={item}
+                                onClick={() => setSearchParams({ page: String(item) })}
+                                aria-current={item === page ? "page" : undefined}
+                                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-semibold transition-colors duration-200 ${
+                                    item === page
+                                        ? "bg-[#2a2a2a] text-[#f7f8f8]"
+                                        : "text-[#b3b3b3] hover:bg-white/5 hover:text-[#f7f8f8]"
+                                }`}
+                            >
+                                {item}
+                            </button>
+                        ),
+                    )}
                 </div>
                 <button
                     onClick={() => setSearchParams({ page: String(page + 1) })}
                     disabled={!hasNext}
-                    className="flex h-9 items-center gap-1.5 rounded-full bg-[#1f1f1f] px-4 text-xs font-bold tracking-[1.2px] text-[#f7f8f8] uppercase transition-colors duration-200 hover:bg-[#2a2a2a] disabled:pointer-events-none disabled:opacity-40"
+                    aria-label="Next page"
+                    className="flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-[#1f1f1f] px-3 text-xs font-bold tracking-[1.2px] text-[#f7f8f8] uppercase transition-colors duration-200 hover:bg-[#2a2a2a] disabled:pointer-events-none disabled:opacity-40 sm:px-4"
                 >
-                    Next
+                    <span className="hidden sm:inline">Next</span>
                     <ArrowRight className="h-3.5 w-3.5" />
                 </button>
             </div>
