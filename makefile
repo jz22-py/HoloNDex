@@ -18,9 +18,9 @@ prod-up:
 prod-down:
 	docker compose --env-file .env.prod -f docker-compose.prod.yml down
 
-# For host cron on the Droplet (no Celery)
+# Fetch all production prices synchronously (no Celery worker or Redis); can be scheduled with cron
 prod-fetch-prices:
-	docker compose --env-file .env.prod -f docker-compose.prod.yml exec -T web python manage.py fetch_prices
+	docker compose --env-file .env.prod -f docker-compose.prod.yml exec -T web python manage.py shell -c 'from pricing.tasks import fetch_all_prices; fetch_all_prices()'
 
 stop:
 	docker compose stop
