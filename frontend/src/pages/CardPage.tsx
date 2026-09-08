@@ -6,6 +6,7 @@ import type { Card as CardType } from "../types/card"
 import { CardDetail } from "../components/CardDetail"
 import { PriceChart } from "../components/PriceChart"
 import NotFoundPage from "./NotFoundPage"
+import { Footer } from "../components/Footer"
 
 function CardPage() {
     const params = useParams()
@@ -38,6 +39,7 @@ function CardPage() {
                     <PriceChart cardId={cardId} />
                 </main>
             </div>
+            <Footer />
         </div>
     )
 }

@@ -5,6 +5,7 @@ import type { Set as SetType } from "../types/set"
 import { SetHeader } from "../components/SetHeader"
 import { CardList } from "../components/CardList"
 import NotFoundPage from "./NotFoundPage"
+import { Footer } from "../components/Footer"
 
 function SetPage() {
     const params = useParams()
@@ -30,6 +31,7 @@ function SetPage() {
                     <CardList setId={setId} />
                 </main>
             </div>
+            <Footer />
         </div>
     )
 }

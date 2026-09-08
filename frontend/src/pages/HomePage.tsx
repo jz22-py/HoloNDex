@@ -1,5 +1,6 @@
 import { SetList } from "../components/SetList"
 import logo from "../assets/logo.png"
+import { Footer } from "../components/Footer"
 
 function HomePage() {
     return (
@@ -21,6 +22,7 @@ function HomePage() {
             <main className="mx-auto max-w-350 px-4 sm:px-8">
                 <SetList />
             </main>
+            <Footer />
         </div>
     )
 }
